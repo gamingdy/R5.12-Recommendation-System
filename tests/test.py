@@ -1,7 +1,17 @@
+import os
+import sys
 import unittest
+"""
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+
+# Add the 'model' directory to sys.path
+model_path = os.path.join(project_root, 'utils')
+if model_path not in sys.path:
+    sys.path.append(model_path)
+    """
 from src.utils import pearson_similarity
-
 
 class TestPearson(unittest.TestCase):
     def tests_taille_different(self):
@@ -18,6 +28,10 @@ class TestPearson(unittest.TestCase):
         y = [87, 73, 98, 20, 70, 64, 9, 82, 66, 24]
         self.assertAlmostEqual(pearson_similarity(x, y), -0.1915, places=4)
 
+    def test_denominateur_zero(self):
+        x=[1,2,3,4,5]
+        y=[1,1,1,1,1]
+        self.assertEqual(pearson_similarity(x, y), 0)
 
 if __name__ == "__main__":
     unittest.main()
