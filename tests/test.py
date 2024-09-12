@@ -3,7 +3,6 @@ import unittest
 
 from src.utils import data_reader, get_user_data, pearson_similarity
 
-
 class TestPearson(unittest.TestCase):
     def tests_taille_different(self):
         with self.assertRaises(ValueError):
@@ -24,7 +23,6 @@ class TestPearson(unittest.TestCase):
         y = [1, 1, 1, 1, 1]
         self.assertEqual(pearson_similarity(x, y), 0)
 
-
 class TestData(unittest.TestCase):
     def setUp(self):
         self.dirname = os.path.split(os.path.abspath(__file__))[0]
@@ -37,6 +35,18 @@ class TestData(unittest.TestCase):
         data = data_reader(f"{self.dirname}/dataset/test.xlsx")
         expected = [0, 4, 2, 1, 4, 0, 2, 1, 4, 3, 3, 2, 4, 1, 3, 1, 2, 0, 4, 1]
         self.assertEqual(get_user_data(data, 2), expected)
+
+class TestPrediction(unittest.TestCase):
+    def setUp(self):
+        self.dirname = os.path.split(os.path.abspath(__file__))[0]
+        self.data = data_reader(f"{self.dirname}/dataset/test.xlsx")
+
+    def test_prediction(self):
+        data=[[5,-1,3],[5,3,3]]
+        u=[5,-1,3]
+        item=1
+        liste=[[5,3,3]]
+        self.assertEqual(prediction(u,item,liste), 3)
 
 
 if __name__ == "__main__":

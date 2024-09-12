@@ -18,14 +18,15 @@ def pearson_similarity(u1, u2):
     return numerator / denominator
 
 
-def prediction(utilisateur_a_noter, item, liste_u_notes):
-    numerator = moyenne(utilisateur_a_noter)
+def prediction(data,utilisateur_a_noter, item, liste_u_notes):
+    numerator = moyenne(data,utilisateur_a_noter)
     denominator = 0
     for utilisateur in liste_u_notes:
-        numerator += note(utilisateur, item) - moyenne(
-            utilisateur
-        ) * pearson_similarity(utilisateur_a_noter, utilisateur)
-        denominator += pearson_similarity(utilisateur_a_noter, utilisateur)
+        pearson=pearson_similarity(comparer(utilisateur_a_noter, utilisateur))
+        numerator += note(data,utilisateur, item) - moyenne(data,utilisateur) * pearson
+        denominator += pearson
+    if denominator == 0:
+        return -1
     return numerator / denominator
 
 
@@ -55,6 +56,14 @@ def get_user_data(data, user_id):
 def filtrer(utilisateur):
     return list(filter(lambda x: (x > -1), utilisateur))
 
+def comparer(u1,u2):
+    result_u1=[]
+    result_u2=[]
+    for indice,item in enumerate(u1):
+        if u2[indice]!=-1 and item!=-1:
+            result_u1.append(item)
+            result_u2.append(u2[indice])
+    return(result_u1,result_u2)
 
 def cosine_similarity(u1, u2):
     u1 = np.array(u1)
@@ -65,3 +74,5 @@ def cosine_similarity(u1, u2):
     if norm_u1 == 0 or norm_u2 == 0:
         return 0
     return dot_product / (norm_u1 * norm_u2)
+
+
