@@ -2,17 +2,15 @@ import numpy as np
 import pandas as pd
 
 
-def pearson_similarity(x, y):
-
-    if len(x) != len(y):
+def pearson_similarity(u1, u2):
+    if len(u1) != len(u2):
         raise ValueError("Les deux listes doivent avoir la même longueur")
-    x = np.array(x)
-    y = np.array(y)
-    mean_x = np.mean(x)
-    mean_y = np.mean(y)
-    numerator = np.sum((x - mean_x) * (y - mean_y))
-    denominator = np.sqrt(np.sum((x - mean_x) ** 2) * np.sum((y - mean_y) ** 2))
-
+    u1 = np.array(u1)
+    u2 = np.array(u2)
+    mean_u1 = np.mean(u1)
+    mean_u2 = np.mean(u2)
+    numerator = np.sum((u1 - mean_u1) * (u2 - mean_u2))
+    denominator = np.sqrt(np.sum((u1 - mean_u1) ** 2) * np.sum((u2 - mean_u2) ** 2))
     if denominator == 0:
         return 0
     return numerator / denominator
@@ -52,3 +50,14 @@ def get_user_data(data, user_id):
 def filtrer(utilisateur):
     return list(filter(lambda x:(x>-1),utilisateur))
     
+def cosine_similarity(u1, u2):
+    u1 = np.array(u1)
+    u2 = np.array(u2)   
+    dot_product = np.dot(u1, u2)
+    norm_u1 = np.linalg.norm(u1)
+    norm_u2 = np.linalg.norm(u2)
+    if norm_u1 == 0 or norm_u2 == 0:
+        return 0
+    return dot_product / (norm_u1 * norm_u2)
+
+
