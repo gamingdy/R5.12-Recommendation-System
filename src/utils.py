@@ -16,3 +16,24 @@ def pearson_similarity(x, y):
     return numerator / denominator
 
 
+def prediction(i,j,L):
+    numerator=moyenne(i)
+    denominator=0
+    for u in L:
+        numerator += note(u,j)-moyenne(u)*pearson_similarity(i,u)
+        denominator+=pearson_similarity(i,u)
+    return numerator/denominator
+
+def getListeU(j,L):
+    resultat=[]
+    for k in L:
+        if k[j]!=-1:
+            resultat.append(k)
+
+def moyenne(i):
+    u=getListeBase(i)
+    return(np.mean(u))
+
+def note(i,j):
+    u=getListeBase(i)
+    return(u[j])
