@@ -1,4 +1,6 @@
 import numpy as np
+import pandas as pd
+
 
 def pearson_similarity(x, y):
 
@@ -16,24 +18,35 @@ def pearson_similarity(x, y):
     return numerator / denominator
 
 
-def prediction(i,j,L):
-    numerator=moyenne(i)
-    denominator=0
+def prediction(i, j, L):
+    numerator = moyenne(i)
+    denominator = 0
     for u in L:
-        numerator += note(u,j)-moyenne(u)*pearson_similarity(i,u)
-        denominator+=pearson_similarity(i,u)
-    return numerator/denominator
+        numerator += note(u, j) - moyenne(u) * pearson_similarity(i, u)
+        denominator += pearson_similarity(i, u)
+    return numerator / denominator
 
-def getListeU(j,L):
-    resultat=[]
+
+def data_reader(file_path) -> pd.DataFrame:
+    return pd.read_excel(file_path, header=None)
+
+
+def getListeU(j, L):
+    resultat = []
     for k in L:
-        if k[j]!=-1:
+        if k[j] != -1:
             resultat.append(k)
 
-def moyenne(i):
-    u=getListeBase(i)
-    return(np.mean(u))
 
-def note(i,j):
-    u=getListeBase(i)
-    return(u[j])
+def moyenne(data, i):
+    u = get_user_data(data, i)
+    return np.mean(u)
+
+
+def note(data, i, j):
+    u = get_user_data(data, i)
+    return u[j]
+
+
+def get_user_data(data, user_id):
+    return list(map(int, data.loc[user_id].values[0].split()))
