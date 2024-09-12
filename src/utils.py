@@ -18,12 +18,12 @@ def pearson_similarity(x, y):
     return numerator / denominator
 
 
-def prediction(i, j, L):
-    numerator = moyenne(i)
+def prediction(utilisateur_a_noter, item, liste_u_notes):
+    numerator = moyenne(utilisateur_a_noter)
     denominator = 0
-    for u in L:
-        numerator += note(u, j) - moyenne(u) * pearson_similarity(i, u)
-        denominator += pearson_similarity(i, u)
+    for utilisateur in liste_u_notes:
+        numerator += note(utilisateur, item) - moyenne(utilisateur) * pearson_similarity(utilisateur_a_noter, utilisateur)
+        denominator += pearson_similarity(utilisateur_a_noter, utilisateur)
     return numerator / denominator
 
 
@@ -31,22 +31,24 @@ def data_reader(file_path) -> pd.DataFrame:
     return pd.read_excel(file_path, header=None)
 
 
-def getListeU(j, L):
+def get_liste_utilisateur( data,item):
     resultat = []
-    for k in L:
-        if k[j] != -1:
-            resultat.append(k)
+    for utilisateur in data:
+        if utilisateur[item] != -1:
+            resultat.append(utilisateur)
 
 
-def moyenne(data, i):
-    u = get_user_data(data, i)
-    return np.mean(u)
+def moyenne(data, utilisateur):
+    return np.mean(filtrer(get_user_data(data, utilisateur)))
 
 
-def note(data, i, j):
-    u = get_user_data(data, i)
-    return u[j]
+def note(data, utilisateur, item):
+    return get_user_data(data, utilisateur)[item]
 
 
 def get_user_data(data, user_id):
     return list(map(int, data.loc[user_id].values[0].split()))
+
+def filtrer(utilisateur):
+    return list(filter(lambda x:(x>-1),utilisateur))
+    
