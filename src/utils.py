@@ -15,15 +15,17 @@ def pearson_similarity(u1, u2):
     )
     if denominator == 0:
         return 0
-    return numerator / denominator
+    result = numerator/denominator
+    return result
 
 
-def prediction(data,utilisateur_a_noter, item, liste_u_notes):
-    numerator = moyenne(data,utilisateur_a_noter)
+def prediction(utilisateur_a_noter, item, liste_u_notes):
+    numerator = moyenne(utilisateur_a_noter)
     denominator = 0
     for utilisateur in liste_u_notes:
-        pearson=pearson_similarity(comparer(utilisateur_a_noter, utilisateur))
-        numerator += note(data,utilisateur, item) - moyenne(data,utilisateur) * pearson
+        u1,u2 = comparer(utilisateur_a_noter, utilisateur)
+        pearson=pearson_similarity(u1,u2)
+        numerator += (note(utilisateur, item) - moyenne(utilisateur)) * pearson
         denominator += pearson
     if denominator == 0:
         return -1
@@ -36,17 +38,21 @@ def data_reader(file_path) -> pd.DataFrame:
 
 def get_liste_utilisateur(data, item):
     resultat = []
-    for utilisateur in data:
-        if utilisateur[item] != -1:
-            resultat.append(utilisateur)
+    for i, _ in data.iterrows():
+        user =get_user_data(data,i)
+        if user[item] != -1:
+            resultat.append(user)
+    
+    return resultat
+    
 
 
-def moyenne(data, utilisateur):
-    return np.mean(filtrer(get_user_data(data, utilisateur)))
+def moyenne(utilisateur):
+    return np.mean(filtrer(utilisateur))
 
 
-def note(data, utilisateur, item):
-    return get_user_data(data, utilisateur)[item]
+def note(utilisateur, item):
+    return utilisateur[item]
 
 
 def get_user_data(data, user_id):

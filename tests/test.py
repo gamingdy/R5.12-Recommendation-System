@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from src.utils import data_reader, get_user_data, pearson_similarity
+from src.utils import data_reader, get_liste_utilisateur, get_user_data, pearson_similarity,prediction
 
 class TestPearson(unittest.TestCase):
     def tests_taille_different(self):
@@ -39,13 +39,13 @@ class TestData(unittest.TestCase):
 class TestPrediction(unittest.TestCase):
     def setUp(self):
         self.dirname = os.path.split(os.path.abspath(__file__))[0]
-        self.data = data_reader(f"{self.dirname}/dataset/test.xlsx")
+        self.data = data_reader(f"{self.dirname}/dataset/test2.xlsx")
 
     def test_prediction(self):
-        data=[[5,-1,3],[5,3,3]]
-        u=[5,-1,3]
+        u=get_user_data(self.data,0)
         item=1
-        liste=[[5,3,3]]
+        liste=get_liste_utilisateur(self.data,1)
+        print(prediction(u,item,liste))
         self.assertEqual(prediction(u,item,liste), 3)
 
 
