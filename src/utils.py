@@ -11,7 +11,7 @@ def pearson_similarity(u1, u2):
     mean_u2 = np.mean(u2)
     numerator = np.sum((u1 - mean_u1) * (u2 - mean_u2))
     denominator = np.sqrt(
-        np.sum((u1 - mean_u1) ** 2) * np.sum((u2 - mean_u2) ** 2)
+        np.sum((u1 - mean_u1) ** 2)) *  np.sqrt(np.sum((u2 - mean_u2) ** 2)
     )
     if denominator == 0:
         return 0
