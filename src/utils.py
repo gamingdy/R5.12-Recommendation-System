@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import pandas as pd
 
@@ -23,7 +24,7 @@ def pearson_similarity(u1, u2):
 
 
 def prediction(utilisateur_a_noter, item, liste_u_notes):
-    numerator = moyenne(utilisateur_a_noter)
+    numerator = 0
     denominator = 0
     for utilisateur in liste_u_notes:
         u1, u2 = comparer(utilisateur_a_noter, utilisateur)
@@ -32,7 +33,8 @@ def prediction(utilisateur_a_noter, item, liste_u_notes):
         denominator += pearson
     if denominator == 0:
         return -1
-    return abs(numerator / denominator)
+    return math.trunc(numerator / denominator + moyenne(utilisateur_a_noter))
+
 
 
 def data_reader(file_path) -> pd.DataFrame:

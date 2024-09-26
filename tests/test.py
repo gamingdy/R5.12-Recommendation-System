@@ -45,8 +45,7 @@ class TestPrediction(unittest.TestCase):
         u=get_user_data(self.data,0)
         item=1
         liste=get_liste_utilisateur(self.data,1)
-        print(prediction(u,item,liste))
-        self.assertEqual(prediction(u,item,liste), 3)
+        self.assertEqual(prediction(u,item,liste), 5)
 
 
 if __name__ == "__main__":
