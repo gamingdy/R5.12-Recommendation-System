@@ -24,7 +24,6 @@ def pearson_similarity(u1, u2):
     result = numerator / denominator
     return result
 
-
 def prediction(utilisateur_a_noter, item, liste_u_notes):
     numerator = 0
     denominator = 0
@@ -36,6 +35,18 @@ def prediction(utilisateur_a_noter, item, liste_u_notes):
     if denominator == 0:
         return -1
     return math.trunc(numerator / denominator + moyenne(utilisateur_a_noter))
+
+def prediction3(utilisateur_a_noter, item, liste_u_notes):
+    numerator = 0
+    denominator = 0
+    for utilisateur in liste_u_notes:
+        u1, u2 = comparer(utilisateur_a_noter, utilisateur)
+        pearson = pearson_similarity(u1, u2)
+        numerator += (note(utilisateur, item) ) * pearson
+        denominator += pearson
+    if denominator == 0:
+        return -1
+    return round(numerator / denominator)
 
 def prediction2(utilisateur_a_noter, item, liste_u_notes):
     numerator = 0
@@ -125,13 +136,18 @@ def remplir_total_pearson(data_vide):
 
     for i in range (1):
         u=get_user_data(data_vide,i)
+        print(u)
         lst = list(range(10))
         for j,item in enumerate(u):
+            if j >10:
+                break
             if item==-1:
-                liste=get_liste_utilisateur(data_vide,item)
-                predicted_value = prediction(u, item, liste)
+                liste=get_liste_utilisateur(data_vide,j)
+                predicted_value = prediction(u, j, liste)
+                print(j,predicted_value)
                 ws.cell(row=i+1, column=j+1, value=predicted_value)
             else:
+                #print(item)
                 ws.cell(row=i+1, column=j+1, value=item)
             
     
