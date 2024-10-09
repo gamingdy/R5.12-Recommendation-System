@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from src.utils import data_reader, get_liste_utilisateur, get_user_data, pearson_similarity,prediction, prediction2, remplir_total_pearson
+from src.utils import data_reader, efficacite_simple, get_liste_utilisateur, get_user_data, pearson_similarity,prediction, prediction2, remplir_total_pearson,efficacite
 
 class TestPearson(unittest.TestCase):
     def tests_taille_different(self):
@@ -42,7 +42,8 @@ class TestPrediction(unittest.TestCase):
         self.data = data_reader(f"{self.dirname}/dataset/test2.xlsx")
         self.data2=data_reader(f"{self.dirname}/dataset/test.xlsx")
         self.data3 = data_reader(f"{self.dirname}/dataset/toy_incomplet.xlsx")
-    
+        self.data4=data_reader(f"{self.dirname}/dataset/toy_complet.xlsx")
+    """
     def test_remplir_total_p(self):
         used_data=self.data3
         remplir_total_pearson(used_data)
@@ -60,6 +61,14 @@ class TestPrediction(unittest.TestCase):
         
         for k,v in enumerate(result):
             print(match_[k][1], v)
+    """
+    
+    def test_efficate(self):
+        data_incomplet = self.data3
+        data_complet = self.data4
+        efficacite(data_incomplet, data_complet)
+        #efficacite_simple(data_incomplet,data_complet)
+
     """  
     def test_prediction(self):
         used_data = self.data
