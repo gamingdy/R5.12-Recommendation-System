@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from src.utils import data_reader, get_liste_utilisateur, get_user_data, pearson_similarity,prediction
+from src.utils import data_reader, get_liste_utilisateur, get_user_data, pearson_similarity,prediction, prediction2, remplir_total_pearson
 
 class TestPearson(unittest.TestCase):
     def tests_taille_different(self):
@@ -40,13 +40,59 @@ class TestPrediction(unittest.TestCase):
     def setUp(self):
         self.dirname = os.path.split(os.path.abspath(__file__))[0]
         self.data = data_reader(f"{self.dirname}/dataset/test2.xlsx")
-
+        self.data2=data_reader(f"{self.dirname}/dataset/test.xlsx")
+        self.data3 = data_reader(f"{self.dirname}/dataset/toy_incomplet.xlsx")
+    
+    def test_remplir_total_p(self):
+        used_data=self.data3
+        remplir_total_pearson(used_data)
+        self.assertEqual(1,1)
+        
+    def test_prediction_values(self):
+        used_data = self.data3
+        u = get_user_data(used_data,0)
+        match_ = [(0,1),(1,2),(3,5),(4,4),(6,0),(7,2),(10,3)]
+        result = []
+        for note in match_:
+            item = note[0]
+            liste=get_liste_utilisateur(used_data,item)
+            result.append(prediction(u,item,liste))
+        
+        for k,v in enumerate(result):
+            print(match_[k][1], v)
+    """  
     def test_prediction(self):
-        u=get_user_data(self.data,0)
+        used_data = self.data
+        u=get_user_data(used_data,0)
         item=1
-        liste=get_liste_utilisateur(self.data,1)
+        liste=get_liste_utilisateur(used_data,item)
         self.assertEqual(prediction(u,item,liste), 5)
 
+    def test_prediction2(self):
+        used_data = self.data
+        u=get_user_data(used_data,0)
+        item=1
+        liste=get_liste_utilisateur(used_data,item)
+        self.assertEqual(prediction2(u,item,liste), 5)
+    
+    def test_prediction_gros(self):
+        used_data = self.data3
+        u=get_user_data(used_data,0)
+        item=3
+        liste=get_liste_utilisateur(used_data,item)
+        self.assertEqual(prediction(u,item,liste), 2)
+
+    def test_prediction2_gros(self):
+        used_data = self.data3
+        u=get_user_data(used_data,0)
+        item=3
+        liste=get_liste_utilisateur(used_data,item)
+        self.assertEqual(prediction2(u,item,liste), 2)
+    
+    
+    """
+
+    
 
 if __name__ == "__main__":
     unittest.main()
