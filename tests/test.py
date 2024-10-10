@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from src.utils import data_reader, efficacite_simple, get_liste_utilisateur, get_user_data, pearson_similarity,prediction, prediction2, remplir_total_pearson,efficacite
+from src.utils import data_reader, efficacite2, efficacite_simple, get_liste_utilisateur, get_user_data, pearson_similarity,prediction, prediction_cosine, remplir_total_pearson,efficacite
 
 
 class TestPearson(unittest.TestCase):
@@ -70,8 +70,13 @@ class TestPrediction(unittest.TestCase):
         data_incomplet = self.data3
         data_complet = self.data4
         efficacite(data_incomplet, data_complet)
+        efficacite2(data_incomplet, data_complet)
         #efficacite_simple(data_incomplet,data_complet)
 
+    def test_prediction_item(self):
+        data_incomplet = self.data3
+        data_complet = self.data4
+        #efficacite_simple(data_incomplet,data_complet)
     """  
     def test_prediction(self):
         used_data = self.data
@@ -85,7 +90,7 @@ class TestPrediction(unittest.TestCase):
         u=get_user_data(used_data,0)
         item=1
         liste=get_liste_utilisateur(used_data,item)
-        self.assertEqual(prediction2(u,item,liste), 5)
+        self.assertEqual(prediction_cosine(u,item,liste), 5)
     
     def test_prediction_gros(self):
         used_data = self.data3
@@ -99,7 +104,7 @@ class TestPrediction(unittest.TestCase):
         u=get_user_data(used_data,0)
         item=3
         liste=get_liste_utilisateur(used_data,item)
-        self.assertEqual(prediction2(u,item,liste), 2)
+        self.assertEqual(prediction_cosine(u,item,liste), 2)
     
     
     """

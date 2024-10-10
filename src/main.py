@@ -1,8 +1,16 @@
-from .utils import prediction4,data_reader,get_user_data,get_liste_utilisateur
+from utils import efficacite
+from multiprocessing.pool import Pool
+import matplotlib.pyplot as plt
+import openpyxl
+import os
+import time
 
-incomplete = data_reader("dataset/toy_incomplet.xlsx")
-item = 1
-u = get_user_data(incomplete, 0)
+if __name__ == "__main__":
+    nb_user = range(5,19)
+    t1 = time.time()
+    with Pool() as pool:
+        res = pool.map(efficacite, nb_user)
 
-liste=get_liste_utilisateur(incomplete,item)
-pred = prediction4(u,item,liste)
+    for res_abs,user_id in res:
+        print(res_abs ,"  nb -----  " ,user_id, ": res abs")
+    

@@ -26,13 +26,19 @@ def pearson_similarity(u1, u2):
     result = numerator / denominator
     return result
 
+def calculate_pearson(utilisateur_a_noter,liste_u_notes):
+    result = []
+    for utilisateur in liste_u_notes:
+        u1, u2 = comparer(utilisateur_a_noter, utilisateur)
+        pearson = pearson_similarity(u1, u2)
+        result.append((utilisateur,pearson))
+    return result
 
 def prediction(utilisateur_a_noter, item, liste_u_notes):
     numerator = 0
     denominator = 0
-    for utilisateur in liste_u_notes:
-        u1, u2 = comparer(utilisateur_a_noter, utilisateur)
-        pearson = pearson_similarity(u1, u2)
+    all_pearson = calculate_pearson(utilisateur_a_noter,liste_u_notes)
+    for utilisateur,pearson in all_pearson:
         numerator += (note(utilisateur, item) - moyenne(utilisateur)) * pearson
         denominator += pearson
     if denominator == 0:
@@ -40,27 +46,26 @@ def prediction(utilisateur_a_noter, item, liste_u_notes):
     return math.trunc(numerator / denominator + moyenne(utilisateur_a_noter))
 
 
-def prediction5(utilisateur_a_noter, item, liste_u_notes):
+def prediction3_square(utilisateur_a_noter, item, liste_u_notes):
     numerator = 0
     denominator = 0
-    for utilisateur in liste_u_notes:
-        u1, u2 = comparer(utilisateur_a_noter, utilisateur)
-        pearson = pearson_similarity(u1, u2)
+    all_pearson = calculate_pearson(utilisateur_a_noter,liste_u_notes)
+
+    for utilisateur,pearson in all_pearson:
         numerator += (
-            note(utilisateur, item) - moyenne(utilisateur)
+            note(utilisateur, item) -  moyenne(utilisateur)
         ) * pearson**2
         denominator += pearson**2
     if denominator == 0:
-        return -1
-    return math.trunc(numerator / denominator + moyenne(utilisateur_a_noter))
+        return -1       
+    return math.trunc((numerator / denominator) + moyenne(utilisateur_a_noter))
 
 
 def prediction3(utilisateur_a_noter, item, liste_u_notes):
     numerator = 0
     denominator = 0
-    for utilisateur in liste_u_notes:
-        u1, u2 = comparer(utilisateur_a_noter, utilisateur)
-        pearson = pearson_similarity(u1, u2)
+    all_pearson = calculate_pearson(utilisateur_a_noter,liste_u_notes)
+    for utilisateur,pearson in all_pearson:
         numerator += (note(utilisateur, item)) * pearson
         denominator += pearson
     if denominator == 0:
@@ -68,7 +73,7 @@ def prediction3(utilisateur_a_noter, item, liste_u_notes):
     return round(numerator / denominator)
 
 
-def prediction2(utilisateur_a_noter, item, liste_u_notes):
+def prediction_cosine(utilisateur_a_noter, item, liste_u_notes):
     numerator = 0
     denominator = 0
     for utilisateur in liste_u_notes:
@@ -81,25 +86,35 @@ def prediction2(utilisateur_a_noter, item, liste_u_notes):
     return math.trunc(numerator / denominator + moyenne(utilisateur_a_noter))
 
 
-def prediction4(utilisateur_a_noter, item, liste_u_notes, nb_user):
+def prediction_limited_user(utilisateur_a_noter, item, liste_u_notes, nb_user):
     numerator = 0
     denominator = 0
-    pearson_list = []
-    for utilisateur in liste_u_notes:
-        u1, u2 = comparer(utilisateur_a_noter, utilisateur)
-        pearson = pearson_similarity(u1, u2)
-        pearson_list.append([utilisateur, pearson])
+    all_pearson = calculate_pearson(utilisateur_a_noter,liste_u_notes)
 
-    pearson_list.sort(key=lambda x: x[1], reverse=True)
-    pearson_list = pearson_list[:nb_user]
+    all_pearson.sort(key=lambda x: x[1], reverse=True)
+    all_pearson = all_pearson[:nb_user]
 
-    for user, pearson in pearson_list:
+    for user, pearson in all_pearson:
         numerator += (note(user, item)) * pearson**2
         denominator += pearson**2
     if denominator == 0:
         return -1
     return round(numerator / denominator)
 
+def prediction_limited_user2(utilisateur_a_noter, item, liste_u_notes, nb_user):
+    numerator = 0
+    denominator = 0
+    all_pearson = calculate_pearson(utilisateur_a_noter,liste_u_notes)
+
+    all_pearson.sort(key=lambda x: x[1], reverse=True)
+    all_pearson = all_pearson[:nb_user]
+
+    for user, pearson in all_pearson:
+        numerator += (note(user, item)) * pearson
+        denominator += pearson
+    if denominator == 0:
+        return -1
+    return round(numerator / denominator)
 
 def data_reader(file_path) -> pd.DataFrame:
     return pd.read_excel(file_path, header=None)
@@ -111,6 +126,15 @@ def get_liste_utilisateur(data, item):
         user = get_user_data(data, i)
         if user[item] != -1:
             resultat.append(user)
+
+    return resultat
+
+def get_liste_item(data, user):
+    resultat = []
+    for i, _ in data.iterrows():
+        item = get_item_data(data, i)
+        if item[user] != -1:
+            resultat.append(item)
 
     return resultat
 
@@ -126,6 +150,14 @@ def note(utilisateur, item):
 def get_user_data(data, user_id):
     return list(map(int, data.loc[user_id].values[0].split()))
 
+def get_item_data(data, item_id):
+    items_data = []
+    for user in range(len(data)):
+        user_data = get_user_data(data,user)
+        items_data.append(user_data[item_id])
+
+
+    return items_data
 
 def filtrer(utilisateur):
     return list(filter(lambda x: (x > -1), utilisateur))
@@ -157,13 +189,13 @@ def cosine_similarity(u1, u2):
 
 def qualite_prediction(data_complet, data_rempli):
     resultat = 0
-    for i in range(100):
+    for i in range(len(data_complet)):
         u_complet = get_user_data(data_complet, i)
         u_rempli = get_user_data(data_rempli, i)
         liste = zip(u_complet, u_rempli)
         for j in liste:
             resultat += j[1] - j[0]
-    return resultat(100)
+    return resultat
 
 
 def remplir_total_pearson(data_vide):
@@ -193,42 +225,16 @@ def remplir_total_pearson(data_vide):
     if not os.path.exists(dataset_dir):
         os.makedirs(dataset_dir)
     save_path = os.path.join(dataset_dir, "data_remplie.xlsx")
-    print(save_path)
     wb.save(save_path)
 
 
-def efficacite(data_incomplet, data_reel):
-    nb_user = range(4, 25)
-    all_biais = []
-    all_abs = []
-    for nb in nb_user:
-        print(nb)
-        predicted_faux = []
-        for i in range(2, 3):
-            utilisateur = get_user_data(data_incomplet, i)
-            utilisateur_reel = get_user_data(data_reel, i)
-            taille = len(utilisateur)
-            for j, item in enumerate(utilisateur):
-                if j > taille:
-                    break
+def efficacite(nb_user):
+    dirname = os.path.split(os.path.abspath(__file__))[0]
+    data_incomplet = data_reader(f"{dirname}/../dataset/toy_incomplet.xlsx")
+    data_reel = data_reader(f"{dirname}/../dataset/toy_complet.xlsx")
 
-                if item == -1:
-                    liste = get_liste_utilisateur(data_incomplet, j)
-                    predicted_value = prediction4(utilisateur, j, liste, nb)
-                    predicted_faux.append(predicted_value - utilisateur_reel[j])
-            res_biais = sum(predicted_faux) / taille
-            res_abs = sum([abs(i) for i in predicted_faux]) / taille
-            all_biais.append(res_biais)
-            all_abs.append(res_abs)
-
-    plt.plot(nb_user, all_abs, label="abs", color="red")
-    plt.plot(nb_user, all_biais, label="biais", color="blue")
-    plt.show()
-
-
-def efficacite_simple(data_incomplet, data_reel):
     predicted_faux = []
-    for i in range(1, 2):
+    for i in range(1, 20):
         utilisateur = get_user_data(data_incomplet, i)
         utilisateur_reel = get_user_data(data_reel, i)
         taille = len(utilisateur)
@@ -238,8 +244,75 @@ def efficacite_simple(data_incomplet, data_reel):
 
             if item == -1:
                 liste = get_liste_utilisateur(data_incomplet, j)
-                predicted_value = prediction5(utilisateur, j, liste)
+                predicted_value = prediction_limited_user(utilisateur, j, liste, nb_user)
                 predicted_faux.append(predicted_value - utilisateur_reel[j])
+        res_abs = sum([abs(i) for i in predicted_faux]) / taille
+    
+    return res_abs,nb_user
+        
+            #all_biais.append(res_biais)
+            #all_abs.append(res_abs)
+
+    #plt.plot(nb_user, all_abs, label="abs", color="red")
+    #plt.plot(nb_user, all_biais, label="biais", color="blue")
+    #plt.show()
+
+def efficacite2(nb_user):
+    dirname = os.path.split(os.path.abspath(__file__))[0]
+    data_incomplet = data_reader(f"{dirname}/../dataset/toy_incomplet.xlsx")
+    data_reel = data_reader(f"{dirname}/../dataset/toy_complet.xlsx")
+    predicted_faux = []
+    for i in range(1, 20):
+        utilisateur = get_user_data(data_incomplet, i)
+        utilisateur_reel = get_user_data(data_reel, i)
+        taille = len(utilisateur)
+        for j, item in enumerate(utilisateur):
+            if j > taille:
+                break
+
+            if item == -1:
+                liste = get_liste_utilisateur(data_incomplet, j)
+                predicted_value = prediction_limited_user2(utilisateur, j, liste, nb)
+                predicted_faux.append(predicted_value - utilisateur_reel[j])
+        res_abs = sum([abs(i) for i in predicted_faux]) / taille
+    return res_abs,nb_user
+        
+
+
+def efficacite_simple_item(data_incomplet, data_reel):
+    predicted_faux = []
+    for i in range(1, 2):
+        item = get_item_data(data_incomplet, i)
+        item_reel = get_item_data(data_reel, i)
+        taille = len(item)
+        for j, user in enumerate(item):
+            if j > taille:
+                break
+
+            if user == -1:
+                liste = get_liste_item(data_incomplet, j)
+                predicted_value = prediction3_square(item, j, liste)
+                predicted_faux.append(predicted_value - item_reel[j])
+        res_biais = sum(predicted_faux) / taille
+        res_abs = sum([abs(i) for i in predicted_faux]) / taille
+        print(res_abs, ": res abs")
+        print(res_biais, ": res biais")
+
+
+def efficacite_simple(data_incomplet, data_reel):
+    predicted_faux = []
+    for i in range(1,5):
+        utilisateur = get_user_data(data_incomplet, i)
+        utilisateur_reel = get_user_data(data_reel, i)
+        taille = len(utilisateur)
+        for j, item in enumerate(utilisateur):
+            if j > taille:
+                break
+
+            if item == -1:
+                liste = get_liste_utilisateur(data_incomplet, j)
+                predicted_value = prediction3(utilisateur, j, liste)
+                predicted_faux.append(predicted_value - utilisateur_reel[j])        
         res_biais = sum(predicted_faux) / taille
         res_abs = sum([abs(i) for i in predicted_faux]) / taille
         print(res_abs, ": res abs")
