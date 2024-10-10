@@ -167,7 +167,6 @@ def qualite_prediction(data_complet, data_rempli):
 
 
 def remplir_total_pearson(data_vide):
-
     wb = openpyxl.Workbook()
     ws = wb.active
 
@@ -175,6 +174,7 @@ def remplir_total_pearson(data_vide):
         u = get_user_data(data_vide, i)
         print(u)
         lst = list(range(10))
+        row = ""
         for j, item in enumerate(u):
             if j > 10:
                 break
@@ -182,10 +182,11 @@ def remplir_total_pearson(data_vide):
                 liste = get_liste_utilisateur(data_vide, j)
                 predicted_value = prediction(u, j, liste)
                 print(j, predicted_value)
-                ws.cell(row=i + 1, column=j + 1, value=predicted_value)
+                row += f"{predicted_value} "
             else:
-                # print(item)
-                ws.cell(row=i + 1, column=j + 1, value=item)
+                row += f"{item} "
+
+            ws.cell(row=i + 1, column=1, value=row)
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
     dataset_dir = os.path.join(base_dir, "..", "tests/dataset")
