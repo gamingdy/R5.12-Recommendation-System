@@ -3,6 +3,7 @@ import unittest
 
 from src.utils import data_reader, efficacite_simple, get_liste_utilisateur, get_user_data, pearson_similarity,prediction, prediction2, remplir_total_pearson,efficacite
 
+
 class TestPearson(unittest.TestCase):
     def tests_taille_different(self):
         with self.assertRaises(ValueError):
@@ -23,6 +24,7 @@ class TestPearson(unittest.TestCase):
         y = [1, 1, 1, 1, 1]
         self.assertEqual(pearson_similarity(x, y), 0)
 
+
 class TestData(unittest.TestCase):
     def setUp(self):
         self.dirname = os.path.split(os.path.abspath(__file__))[0]
@@ -36,23 +38,24 @@ class TestData(unittest.TestCase):
         expected = [0, 4, 2, 1, 4, 0, 2, 1, 4, 3, 3, 2, 4, 1, 3, 1, 2, 0, 4, 1]
         self.assertEqual(get_user_data(data, 2), expected)
 
+
 class TestPrediction(unittest.TestCase):
     def setUp(self):
         self.dirname = os.path.split(os.path.abspath(__file__))[0]
         self.data = data_reader(f"{self.dirname}/dataset/test2.xlsx")
-        self.data2=data_reader(f"{self.dirname}/dataset/test.xlsx")
+        self.data2 = data_reader(f"{self.dirname}/dataset/test.xlsx")
         self.data3 = data_reader(f"{self.dirname}/dataset/toy_incomplet.xlsx")
         self.data4=data_reader(f"{self.dirname}/dataset/toy_complet.xlsx")
     """
     def test_remplir_total_p(self):
-        used_data=self.data3
+        used_data = self.data3
         remplir_total_pearson(used_data)
-        self.assertEqual(1,1)
-        
+        self.assertEqual(1, 1)
+
     def test_prediction_values(self):
         used_data = self.data3
-        u = get_user_data(used_data,0)
-        match_ = [(0,1),(1,2),(3,5),(4,4),(6,0),(7,2),(10,3)]
+        u = get_user_data(used_data, 0)
+        match_ = [(0, 1), (1, 2), (3, 5), (4, 4), (6, 0), (7, 2), (10, 3)]
         result = []
         for note in match_:
             item = note[0]
@@ -101,7 +104,6 @@ class TestPrediction(unittest.TestCase):
     
     """
 
-    
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,6 @@
 import math
 import os
+
 import numpy as np
 import openpyxl
 import pandas as pd
@@ -24,6 +25,7 @@ def pearson_similarity(u1, u2):
         return 0
     result = numerator / denominator
     return result
+
 
 def prediction(utilisateur_a_noter, item, liste_u_notes):
     numerator = 0
@@ -56,11 +58,12 @@ def prediction3(utilisateur_a_noter, item, liste_u_notes):
     for utilisateur in liste_u_notes:
         u1, u2 = comparer(utilisateur_a_noter, utilisateur)
         pearson = pearson_similarity(u1, u2)
-        numerator += (note(utilisateur, item) ) * pearson
+        numerator += (note(utilisateur, item)) * pearson
         denominator += pearson
     if denominator == 0:
         return -1
     return round(numerator / denominator)
+
 
 def prediction2(utilisateur_a_noter, item, liste_u_notes):
     numerator = 0
@@ -93,7 +96,6 @@ def prediction4 (utilisateur_a_noter, item, liste_u_notes,nb_user):
         return -1
     return round(numerator / denominator)
     
-
 
 def data_reader(file_path) -> pd.DataFrame:
     return pd.read_excel(file_path, header=None)
@@ -149,46 +151,45 @@ def cosine_similarity(u1, u2):
     return dot_product / (norm_u1 * norm_u2)
 
 
-def qualite_prediction(data_complet,data_rempli):
-    resultat=0
-    for i in range (100):
-        u_complet=get_user_data(data_complet,i)
-        u_rempli=get_user_data(data_rempli,i)
-        liste=zip(u_complet,u_rempli)
-        for j in  liste:
-            resultat+=j[1]-j[0]
+def qualite_prediction(data_complet, data_rempli):
+    resultat = 0
+    for i in range(100):
+        u_complet = get_user_data(data_complet, i)
+        u_rempli = get_user_data(data_rempli, i)
+        liste = zip(u_complet, u_rempli)
+        for j in liste:
+            resultat += j[1] - j[0]
     return resultat(100)
+
 
 def remplir_total_pearson(data_vide):
 
     wb = openpyxl.Workbook()
     ws = wb.active
 
-    for i in range (1):
-        u=get_user_data(data_vide,i)
+    for i in range(1):
+        u = get_user_data(data_vide, i)
         print(u)
         lst = list(range(10))
-        for j,item in enumerate(u):
-            if j >10:
+        for j, item in enumerate(u):
+            if j > 10:
                 break
-            if item==-1:
-                liste=get_liste_utilisateur(data_vide,j)
+            if item == -1:
+                liste = get_liste_utilisateur(data_vide, j)
                 predicted_value = prediction(u, j, liste)
-                print(j,predicted_value)
-                ws.cell(row=i+1, column=j+1, value=predicted_value)
+                print(j, predicted_value)
+                ws.cell(row=i + 1, column=j + 1, value=predicted_value)
             else:
-                #print(item)
-                ws.cell(row=i+1, column=j+1, value=item)
-            
-    
-    base_dir = os.path.dirname(os.path.abspath(__file__))  
-    dataset_dir = os.path.join(base_dir, '..', 'tests/dataset')  
+                # print(item)
+                ws.cell(row=i + 1, column=j + 1, value=item)
+
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    dataset_dir = os.path.join(base_dir, "..", "tests/dataset")
     if not os.path.exists(dataset_dir):
         os.makedirs(dataset_dir)
-    save_path = os.path.join(dataset_dir, 'data_remplie.xlsx')
+    save_path = os.path.join(dataset_dir, "data_remplie.xlsx")
     print(save_path)
     wb.save(save_path)
-   
 
 
 
